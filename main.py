@@ -1,6 +1,7 @@
-import discord
-import time
 import asyncio
+import discord
+import os
+import time
 from datetime import timedelta
 from discord.ext import tasks
 
@@ -48,3 +49,5 @@ async def on_ready():
 
     print("Starting poll...")
     startPoll.start()
+
+client.run(os.getenv("API_KEY"))
