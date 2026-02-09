@@ -1,12 +1,20 @@
 import asyncio
 import discord
+import logging
 import os
 import time
 from datetime import timedelta
 from discord.ext import tasks
 
+logger = logging.getLogger("Main")
+streamHandler = logging.StreamHandler()
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
+
+streamHandler.setLevel(logging.INFO)
+streamHandler.setFormatter(logging.Formatter("[%(asctime)s - %(name)s]: %(message)s"))
+logger.setLevel(logging.INFO)
+logger.addHandler(streamHandler)
 
 @tasks.loop(seconds=604800)
 async def startPoll():
@@ -25,10 +33,10 @@ async def startPoll():
 
 @client.event
 async def on_ready():
-    print("Logged in as")
-    print(client.user.name)
-    print(client.user.id)
-    print("-----")
+    logger.info("Logged in as")
+    logger.info(client.user.name)
+    logger.info(client.user.id)
+    logger.info("-----")
     
     secondsSinceLastInterrogation = (int(time.time()) - 241200) % 604800
     
@@ -36,7 +44,7 @@ async def on_ready():
         secondsBeforeNextInterrogation = 604800 - secondsSinceLastInterrogation
 
         while secondsBeforeNextInterrogation > 0:
-            print(f"Awaiting {secondsBeforeNextInterrogation} seconds...")
+            logger.info(f"Awaiting {secondsBeforeNextInterrogation} seconds...")
 
             if secondsBeforeNextInterrogation > 10:
                 await asyncio.sleep(10)
@@ -47,7 +55,7 @@ async def on_ready():
 
                 secondsBeforeNextInterrogation = 0
 
-    print("Starting poll...")
+    logger.info("Starting poll...")
     startPoll.start()
 
-client.run(os.getenv("API_KEY"))
+client.run(os.getenv("API_KEY", ""))
