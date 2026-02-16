@@ -1,6 +1,7 @@
 import asyncio
 import discord
 import logging
+import math
 import os
 import time
 from datetime import timedelta
@@ -28,7 +29,7 @@ async def on_ready():
     logger.info(client.user.id)
     logger.info("-----")
 
-    secondsSinceLastPoll = (int(time.time()) - 212400 ) % 604800
+    secondsSinceLastPoll = (int(time.time()) - 212400) % 604800
 
     if secondsSinceLastPoll > 0:
         secondsBeforeNextPoll = 604800 - secondsSinceLastPoll
@@ -44,8 +45,9 @@ async def createPoll():
     await client.wait_until_ready()
     logger.info("Creating poll...")
 
+    pollDuration = math.ceil((32400 - (int(time.time()) - 212400) % 604800) / 3600)
     channel = client.get_channel(1469769978285916504)
-    poll = discord.Poll(question = "Время:?", duration = timedelta(hours = 1.0))
+    poll = discord.Poll(question = "Время:?", duration = timedelta(hours = pollDuration))
 
     poll.add_answer(text="11pm")
     poll.add_answer(text="11.30pm")
