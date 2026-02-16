@@ -1,5 +1,6 @@
 import asyncio
 import discord
+import hashlib
 import logging
 import math
 import os
@@ -27,6 +28,8 @@ async def on_ready():
     logger.info("Logged in as")
     logger.info(client.user.name)
     logger.info(client.user.id)
+    logger.info("-----")
+    logger.info(f"Hash: {getHash()}")
     logger.info("-----")
 
     secondsSinceLastPoll = (int(time.time()) - 212400) % 604800
@@ -70,5 +73,18 @@ async def wait(seconds):
             await asyncio.sleep(seconds)
 
             seconds = 0
+
+def getHash():
+    hash = hashlib.new("md5")
+
+    with open("main.py", "rb") as file:
+        chunk = 0
+
+        while chunk != b"":
+            chunk = file.read(1024)
+
+            hash.update(chunk)
+
+        return hash.hexdigest()
 
 client.run(os.getenv("API_KEY", ""))
