@@ -21,7 +21,7 @@ logger.addHandler(streamHandler)
 
 @tasks.loop(seconds = 604800)
 async def createPollTimer():
-    createPoll()
+    await createPoll()
 
 @client.event
 async def on_ready():
@@ -38,7 +38,7 @@ async def on_ready():
         secondsBeforeNextPoll = 604800 - secondsSinceLastPoll
 
         if secondsSinceLastPoll <= 32400:
-            createPoll()
+            asyncio.create_task(createPoll())
 
     await wait(secondsBeforeNextPoll)
     logger.info("Starting poll timer...")
